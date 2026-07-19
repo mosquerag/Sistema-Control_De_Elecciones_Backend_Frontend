@@ -1,7 +1,6 @@
 import { BarChart3, Users, CheckCircle, TrendingUp } from "lucide-react";
 import { useState, useEffect, } from "react";
 import { getPublicStats } from "@/api/public";
-import IMG5 from "@/img/IMG_5.svg";
 import GlobalPresence from "./GlobalPresence";
 
 function ControlVotaciones() {
