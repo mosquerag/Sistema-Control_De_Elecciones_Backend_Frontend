@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Menu, Bell, User, Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { confirmarAccion, mostrarAlerta } from "@/utils/alertas";
+import { confirmarAccion, mostrarAlerta, toastError } from "@/utils/alertas";
 import { getNotificaciones } from "@/api/notificaciones";
 import Modal from "./Modal";
 import DetallesUsuarios from "@/pages/admin/DetallesUsuarios";
@@ -36,6 +36,7 @@ export function TopBar({ userData, isMobile, onMenuToggle }) {
         setNotificationCount(pendientes.length);
       } catch (error) {
         console.error("Error al cargar contador de notificaciones:", error);
+        toastError("No se pudo cargar el contador de notificaciones");
       }
     };
     loadNotificationCount();
@@ -55,6 +56,7 @@ export function TopBar({ userData, isMobile, onMenuToggle }) {
       setNotificationCount(pendientes.length);
     } catch (error) {
       console.error("Error al recargar contador:", error);
+      toastError("No se pudo actualizar el contador de notificaciones");
     }
   };
 

@@ -76,8 +76,12 @@ const EleccionListTotal = () => {
       );
 
       setTodasLasElecciones(eleccionesConResultados);
+    // } catch (error) {
+    //   mostrarAlerta("Error al cargar elecciones: " + error.message, "error");
+    //   console.error("Error:", error);
+    // } finally {
     } catch (error) {
-      mostrarAlerta("Error al cargar elecciones: " + error.message, "error");
+      mostrarAlerta("error", "No se pudieron cargar las elecciones", error.message);
       console.error("Error:", error);
     } finally {
       setLoading(false);
