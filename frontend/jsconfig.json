@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "copias/CandidatoForm copy.jsx", "copias/EstadisticasAdmin copy.jsx", "copias/GestionUsuarios copy.jsx", "copias/EleccionesActivas copy.jsx", "copias/elecciones"],
+  "exclude": ["node_modules", "dist"]
+}
