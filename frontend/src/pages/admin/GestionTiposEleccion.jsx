@@ -20,7 +20,7 @@ import BackButton from "@/components/common/BackButton";
 import PageHeader from "@/components/common/PageHeader";
 import FilterBar from "@/components/common/FilterBar";
 import StatusBadge from "@/components/common/StatusBadge";
-import { Trash2, Plus, Filter, Edit } from "lucide-react";
+import { Trash2, Plus, Filter, Edit, Power } from "lucide-react";
 import {
   mostrarAlerta,
   confirmarAccion,
@@ -96,6 +96,27 @@ export default function GestionTiposEleccion() {
     setTipoEdit(null);
     setFormData({ nombre: "", descripcion: "" });
     setModalOpen(true);
+  };
+
+  const handleToggleActivo = (tipo) => {
+    const accion = tipo.activa ? "desactivar" : "activar";
+    confirmarAccion(
+      `¿${tipo.activa ? "Desactivar" : "Activar"} tipo de elección?`,
+      `¿Deseas ${accion} "${tipo.nombre}"?`,
+      async () => {
+        try {
+          await updateTipoEleccion(tipo._id, { activa: !tipo.activa });
+          mostrarAlerta(
+            "success",
+            `Tipo ${tipo.activa ? "desactivado" : "activado"}`,
+            `Se ${accion === "activar" ? "activó" : "desactivó"} correctamente.`,
+          );
+          cargarTipos();
+        } catch (error) {
+          manejarErrorApi(error, `Error al ${accion} tipo de elección`);
+        }
+      },
+    );
   };
 
   const handleDelete = (id) => {
@@ -180,16 +201,51 @@ export default function GestionTiposEleccion() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {tiposFiltrados.length > 0 ? (
           tiposFiltrados.map((tipo) => (
+            // <div
+            //   key={tipo._id}
+            //   className="bg-blue-100 dark:bg-blue-800/60 rounded-2xl shadow-sm border border-blue-500 dark:border-blue-400 
+            //   border-l-4 border-l-blue-500 p-5 hover:shadow-md transition-shadow"
+            // >
             <div
               key={tipo._id}
-              className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-blue-500 dark:border-blue-700 
-              border-l-4 border-l-blue-500 p-5 hover:shadow-md transition-shadow"
+              className={`rounded-2xl shadow-sm border border-l-4 p-5 hover:shadow-md transition-shadow ${
+                tipo.activa
+                  ? "bg-green-100 dark:bg-green-800/60 border-green-500 dark:border-green-500 border-l-green-500"
+                  : "bg-gray-100 dark:bg-slate-800/60 border-gray-300 dark:border-gray-600 border-l-gray-400 opacity-70"
+              }`}
             >
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex-1 mr-2">
                   {tipo.nombre}
                 </h3>
+                {/* <div className="flex gap-1.5 flex-shrink-0">
+                  <Button
+                    onClick={() => handleEdit(tipo)}
+                    variant="warning"
+                    size="sm"
+                    title="Editar"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    onClick={() => handleDelete(tipo._id)}
+                    variant="danger"
+                    size="sm"
+                    title="Eliminar"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
+                </div> */}
+
                 <div className="flex gap-1.5 flex-shrink-0">
+                  <Button
+                    onClick={() => handleToggleActivo(tipo)}
+                    variant={tipo.activa ? "secondary" : "success"}
+                    size="sm"
+                    title={tipo.activa ? "Desactivar" : "Activar"}
+                  >
+                    <Power className="w-3.5 h-3.5" />
+                  </Button>
                   <Button
                     onClick={() => handleEdit(tipo)}
                     variant="warning"
@@ -209,7 +265,7 @@ export default function GestionTiposEleccion() {
                 </div>
               </div>
 
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 {tipo.descripcion || "Sin descripción"}
               </p>
 

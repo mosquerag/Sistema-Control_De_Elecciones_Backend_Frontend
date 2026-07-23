@@ -84,7 +84,7 @@ const MisResultados = () => {
             onClick={() => loadResultados({ showAlert: true })}
             disabled={actualizando}
             variant="primary"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 !bg-orange-700"
           >
             <RefreshCw
               className={`w-4 h-4 ${actualizando ? "animate-spin" : ""}`}
@@ -95,18 +95,18 @@ const MisResultados = () => {
       />
 
       {resultados && (
-        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
+        <div className="bg-blue-200 dark:bg-blue-800/60 border border-blue-500 dark:border-blue-700 rounded-2xl overflow-hidden">
           {/* ── Header ── */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-blue-500 dark:border-blue-600">
             <div>
               <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">
                 Mis resultados
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 dark:text-slate-300 mt-0.5">
                 {eleccion?.titulo}
               </p>
             </div>
-            <div className="flex items-center gap-2 bg-green-300 dark:bg-green-900 border border-green-400 dark:border-green-800 text-green-800 dark:text-green-300 rounded-full px-4 py-1.5 text-sm font-medium">
+            <div className="flex items-center gap-2 bg-green-300 dark:bg-green-800 border border-green-400 dark:border-green-800 text-green-800 dark:text-green-300 rounded-full px-4 py-1.5 text-sm font-medium">
               <Trophy className="w-4 h-4" />
               {misResultados?.posicion}° lugar
             </div>
@@ -115,7 +115,7 @@ const MisResultados = () => {
           {/* ── Body ── */}
           <div className="flex flex-col md:flex-row">
             {/* Columna izquierda */}
-            <div className="flex flex-col items-center justify-center gap-4 px-6 py-6 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 md:min-w-[200px]">
+            <div className="flex flex-col items-center justify-center gap-4 px-6 py-6 border-b md:border-b-0 md:border-r border-blue-500 dark:border-blue-600 md:min-w-[200px]">
               <div className="relative w-28 h-28">
                 <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                   <circle
@@ -125,7 +125,7 @@ const MisResultados = () => {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="8"
-                    className="text-slate-100 dark:text-slate-600"
+                    className="text-white dark:text-slate-400"
                   />
                   <circle
                     cx="50"
@@ -147,7 +147,7 @@ const MisResultados = () => {
               </div>
 
               <div className="text-center">
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-700 dark:text-slate-300">
                   Tu porcentaje
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
@@ -157,19 +157,19 @@ const MisResultados = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-2 w-full">
-                <div className="bg-slate-50 dark:bg-slate-700 rounded-xl p-3 text-center">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                <div className="bg-purple-500 dark:bg-purple-600 border border-purple-800 dark:border-purple-400 rounded-xl p-3 text-center">
+                  <p className="text-xs text-white dark:text-slate-200 mb-1">
                     Votos
                   </p>
-                  <p className="text-xl font-semibold text-blue-600 dark:text-blue-400">
+                  <p className="text-xl font-semibold text-green-300 dark:text-green-400">
                     {misResultados?.votos || 0}
                   </p>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-700 rounded-xl p-3 text-center">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                <div className="bg-rose-300 dark:bg-rose-700 border border-rose-800 dark:border-rose-400 rounded-xl p-3 text-center">
+                  <p className="text-xs text-white dark:text-slate-200 mb-1">
                     Posición
                   </p>
-                  <p className="text-xl font-semibold text-amber-500 dark:text-amber-400">
+                  <p className="text-xl font-semibold text-green-700 dark:text-green-400">
                     {misResultados?.posicion}°
                   </p>
                 </div>
@@ -178,7 +178,7 @@ const MisResultados = () => {
 
             {/* Columna derecha: todos los candidatos */}
             <div className="flex-1 px-6 py-6">
-              <p className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4">
+              <p className="text-xs font-medium text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-4">
                 Todos los candidatos
               </p>
               <div className="space-y-0">
@@ -245,8 +245,8 @@ const MisResultados = () => {
                 })}
               </div>
 
-              <div className="flex justify-between items-center pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex justify-between items-center pt-4 mt-4 border-t border-blue-500 dark:border-blue-600">
+                <span className="text-xs text-slate-700 dark:text-slate-300">
                   Total votantes en esta elección
                 </span>
                 <span className="text-base font-semibold text-slate-800 dark:text-slate-100">

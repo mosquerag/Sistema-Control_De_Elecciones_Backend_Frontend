@@ -152,9 +152,9 @@ const EstadisticasAdmin = () => {
 
   const getBgByEstado = (eleccion) => {
     const estado = getEstadoEleccion(eleccion);
-    if (estado === "activa") return "!bg-green-100 dark:!bg-green-900/40";
-    if (estado === "finalizada") return "!bg-red-100 dark:!bg-red-900/40";
-    if (estado === "proxima") return "!bg-blue-100 dark:!bg-blue-900/40";
+    if (estado === "activa") return "!bg-green-100 dark:!bg-green-900/60";
+    if (estado === "finalizada") return "!bg-red-100 dark:!bg-red-900/60";
+    if (estado === "proxima") return "!bg-blue-100 dark:!bg-blue-900/60";
     return "!bg-gray-50 dark:!bg-slate-800/60";
   };
 

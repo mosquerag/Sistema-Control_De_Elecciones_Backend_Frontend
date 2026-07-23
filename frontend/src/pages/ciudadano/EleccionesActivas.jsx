@@ -83,7 +83,7 @@ const EleccionesActivas = () => {
                       ? "border-red-400 dark:border-red-500" // votó + finalizada → rojo
                       : yaVoto && activa
                         ? "border-green-400 dark:border-green-600 " // votó + activa → verde
-                        : "border-amber-400 dark:border-amber-500" // no ha votado → amarillo
+                        : "border-amber-400 dark:border-amber-500 !bg-amber-100 dark:!bg-amber-900/40" // no ha votado → amarillo
                   }`}
               >
                 {/* Header */}
@@ -94,11 +94,11 @@ const EleccionesActivas = () => {
                   <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                     <StatusBadge status={activa ? "activa" : "finalizada"} />
                     {yaVoto ? (
-                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-200 dark:bg-green-900/40 text-green-800 dark:text-green-300">
                         Ya votaste
                       </span>
                     ) : activa ? (
-                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-200 dark:bg-amber-500/60 text-amber-800 dark:text-amber-300">
                         Pendiente por votar
                       </span>
                     ) : null}
@@ -107,7 +107,7 @@ const EleccionesActivas = () => {
 
                 {/* Descripción */}
                 {eleccion.descripcion && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
                     {eleccion.descripcion}
                   </p>
                 )}

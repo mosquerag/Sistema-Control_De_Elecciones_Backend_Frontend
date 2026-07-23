@@ -115,19 +115,30 @@ const Votar = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <div className="mb-5">
         <BackButton to="/ciudadano/elecciones" label="Volver a elecciones" />
       </div>
 
       {/* Header de la elección */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
+      {/* <div className="flex justify-between items-center p-6 mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">
           🗳️ {eleccion?.titulo}
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           {eleccion?.descripcion}
         </p>
+      </div> */}
+
+      <div class="flex justify-between items-center mb-3 ">
+        <div>
+          <h1 class="text-3xl font-bold text-blue-800 dark:text-blue-400">
+            🗳️ {eleccion?.titulo}
+          </h1>
+          <p class="text-blue-600 dark:text-blue-200 mt-1 text-sm">
+            {eleccion?.descripcion}
+          </p>
+        </div>
       </div>
 
       {/* Lista de candidatos */}
@@ -153,12 +164,12 @@ const Votar = () => {
                 className={`relative flex flex-col items-center text-center p-4 rounded-2xl border-2 transition-all duration-200
             ${
               seleccionado
-                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md"
-                : "border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 hover:border-blue-300 hover:shadow-sm"
+                ? "border-green-500 bg-green-200 dark:bg-green-900/20 shadow-md"
+                : "border-blue-500 dark:border-blue-400 bg-blue-100 dark:bg-blue-800/60 hover:border-blue-300 hover:shadow-sm"
             }`}
               >
                 {seleccionado && (
-                  <span className="absolute top-2 right-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                  <span className="absolute top-2 right-2 text-xs bg-blue-400 dark:bg-blue-700 text-blue-800 dark:text-blue-300 px-2 py-0.5 rounded-full">
                     Seleccionado
                   </span>
                 )}
@@ -195,7 +206,7 @@ const Votar = () => {
           >
             {votando
               ? "Registrando voto..."
-              : `✅ Confirmar Voto${candidatoSelec ? ` por ${candidatoSelec.nombre}` : ""}`}
+              : `Confirmar Voto${candidatoSelec ? ` por ${candidatoSelec.nombre}` : ""}`}
           </Button>
         </div>
       )}

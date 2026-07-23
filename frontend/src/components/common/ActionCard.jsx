@@ -96,7 +96,7 @@ const ActionCard = ({
   // `;
 
   const baseClasses = `
-  group bg-white dark:bg-blue-900/50
+  group bg-blue-100 dark:bg-blue-900/70
   border border-blue-500
   rounded-xl md:rounded-2xl p-5 md:p-6
   shadow-lg hover:shadow-2xl

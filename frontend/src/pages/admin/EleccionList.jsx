@@ -24,14 +24,33 @@ export default function EleccionList({
   const getTipoNombre = (e) =>
     e.idTipoEleccion?.nombre || e.tipoEleccion?.nombre || e.tipo || "—";
 
-  const estaActiva = (e) => {
+  // const estaActiva = (e) => {
+  //   const hoy = new Date();
+  //   return e.activa && new Date(e.fechaFin) >= hoy;
+  // };
+
+  // const getBgByEstado = (activa) => {
+  //   if (activa) return "!bg-green-100 dark:!bg-green-900/60";
+  //   return "!bg-red-50 dark:!bg-red-950/40";
+  // };
+
+  const getEstado = (e) => {
     const hoy = new Date();
-    return e.activa && new Date(e.fechaFin) >= hoy;
+    const finalizada = new Date(e.fechaFin) < hoy;
+    if (finalizada) return "finalizada";
+    return e.activa ? "activa" : "inactiva";
   };
 
-  const getBgByEstado = (activa) => {
-    if (activa) return "!bg-green-50 dark:!bg-green-950/40";
+  const getBgByEstado = (estado) => {
+    if (estado === "activa") return "!bg-green-100 dark:!bg-green-900/60";
+    if (estado === "inactiva") return "!bg-gray-100 dark:!bg-slate-800/60";
     return "!bg-red-50 dark:!bg-red-950/40";
+  };
+
+  const getBorderByEstado = (estado) => {
+    if (estado === "activa") return "border-green-400 dark:border-green-600";
+    if (estado === "inactiva") return "border-gray-300 dark:border-gray-600";
+    return "border-red-400 dark:border-red-600";
   };
 
   const filtradas = elecciones.filter((e) => {
@@ -39,11 +58,18 @@ export default function EleccionList({
       searchTerm === "" ||
       e.titulo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       getTipoNombre(e).toLowerCase().includes(searchTerm.toLowerCase());
-    const activa = estaActiva(e);
+    // const activa = estaActiva(e);
+    // const matchEstado =
+    //   filterEstado === "todas" ||
+    //   (filterEstado === "activas" && activa) ||
+    //   (filterEstado === "finalizadas" && !activa);
+
+    const estado = getEstado(e);
     const matchEstado =
       filterEstado === "todas" ||
-      (filterEstado === "activas" && activa) ||
-      (filterEstado === "finalizadas" && !activa);
+      (filterEstado === "activas" && estado === "activa") ||
+      (filterEstado === "inactivas" && estado === "inactiva") ||
+      (filterEstado === "finalizadas" && estado === "finalizada");
     return matchSearch && matchEstado;
   });
 
@@ -58,9 +84,15 @@ export default function EleccionList({
         showFirstSelect
         firstSelectValue={filterEstado}
         onFirstSelectChange={setFilter}
+        // firstSelectOptions={[
+        //   { value: "todas", label: "Todas" },
+        //   { value: "activas", label: "Activas" },
+        //   { value: "finalizadas", label: "Finalizadas" },
+        // ]}
         firstSelectOptions={[
           { value: "todas", label: "Todas" },
           { value: "activas", label: "Activas" },
+          { value: "inactivas", label: "Inactivas" },
           { value: "finalizadas", label: "Finalizadas" },
         ]}
         firstSelectLabel="Estado"
@@ -80,20 +112,10 @@ export default function EleccionList({
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtradas.map((eleccion) => {
+          {/* {filtradas.map((eleccion) => {
             const activa = estaActiva(eleccion);
             return (
-              // <div
-              //   key={eleccion._id}
-
-              //   className={`bg-white dark:bg-slate-800 rounded-2xl border-2 p-5 shadow-sm
-              //     hover:shadow-md transition-shadow
-              //     ${
-              //       activa
-              //         ? "border-green-400 dark:border-green-600"
-              //         : "border-red-400 dark:border-red-600"
-              //     }`}
-              // >
+              
               <div
                 key={eleccion._id}
                 className={`${getBgByEstado(activa)} rounded-2xl border-2 p-5 shadow-sm
@@ -104,17 +126,34 @@ export default function EleccionList({
                       : "border-red-400 dark:border-red-600"
                   }`}
               >
-                {/* Header */}
+                
                 <div className="flex justify-between items-start mb-3 gap-2">
                   <h3 className="font-bold text-gray-800 dark:text-gray-100 flex-1 leading-tight">
                     {eleccion.titulo}
                   </h3>
                   <StatusBadge
-                    // status={activa}
+             
                     status={activa ? "activa" : "finalizada"}
                     trueLabel="Activa"
                     falseLabel="Finalizada"
                   />
+                </div> */}
+
+          {filtradas.map((eleccion) => {
+            const estado = getEstado(eleccion);
+            return (
+              <div
+                key={eleccion._id}
+                className={`${getBgByEstado(estado)} rounded-2xl border-2 p-5 shadow-sm
+                  hover:shadow-md transition-shadow
+                  ${getBorderByEstado(estado)}`}
+              >
+                {/* Header */}
+                <div className="flex justify-between items-start mb-3 gap-2">
+                  <h3 className="font-bold text-gray-800 dark:text-gray-100 flex-1 leading-tight">
+                    {eleccion.titulo}
+                  </h3>
+                  <StatusBadge status={estado} />
                 </div>
 
                 {/* Info */}

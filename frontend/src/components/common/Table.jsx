@@ -158,7 +158,7 @@ export default function Table({
 
   return (
     <div
-      className="p-1 w-full bg-white dark:bg-slate-800
+      className="p-1 w-full bg-white dark:bg-blue-950
                     divide-y divide-gray-200 dark:divide-slate-500
                     rounded-2xl shadow-lg"
     >
@@ -197,7 +197,7 @@ export default function Table({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead
-            className="bg-white dark:bg-slate-800
+            className="bg-white dark:bg-blue-950
                             divide-y divide-gray-200 dark:divide-slate-400
                             border-b border-gray-300 dark:border-slate-500"
           >
@@ -242,7 +242,7 @@ export default function Table({
           </thead>
 
           <tbody
-            className="bg-white dark:bg-slate-800
+            className="bg-white dark:bg-blue-950
                             divide-y divide-gray-200 dark:divide-slate-500"
           >
             {paginatedData.map((row, rowIndex) => {
