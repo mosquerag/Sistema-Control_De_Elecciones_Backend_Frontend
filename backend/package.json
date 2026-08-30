@@ -1,6 +1,6 @@
 {
   "name": "sistema-votaciones-backend",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Sistema de Votaciones Electrónicas con Google OAuth, gestión de aprobaciones, notificaciones y seguridad avanzada",
   "main": "index.js",
   "type": "module",

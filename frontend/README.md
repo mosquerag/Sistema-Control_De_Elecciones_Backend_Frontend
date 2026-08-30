@@ -1,203 +1,45 @@
-# 🔄 GUÍA DE ACTUALIZACIÓN DE IMPORTS
+# VoteSecure — Frontend
 
-Después de aplicar todos los cambios, actualiza estos imports en tu proyecto.
+Interfaz web del sistema de votaciones electrónicas. React + Vite + Tailwind CSS.
 
----
+Para la descripción general del proyecto, ver el [README principal](../README.md).
 
-## 1. ThemeContext — nueva ubicación
-
-**Buscar y reemplazar en todo el proyecto:**
-
-```
-// ANTES (incorrecto — apuntaba a components/)
-import { useTheme } from './ThemeContext';
-import { useTheme } from '../ThemeContext';
-import { useTheme } from '@/components/ThemeContext';
-import { ThemeProvider } from '@/components/ThemeContext';
-
-// DESPUÉS (correcto)
-import { useTheme }      from '@/context/ThemeContext';
-import { ThemeProvider } from '@/context/ThemeContext';
-```
-
-**Archivos que necesitan el cambio:**
-
-- `src/main.jsx` ✅ (ya actualizado)
-- `src/components/common/ThemeToggle.jsx` ✅ (ya actualizado)
-- `src/components/ThemeToggle.jsx` → actualizar (o eliminar este archivo)
-- Cualquier otro componente que use `useTheme`
-
----
-
-## 2. ProtectedRoute / PublicRoute — nueva ubicación
-
-```
-// ANTES
-import ProtectedRoute from '@/utils/ProtectedRoute';
-import ProtectedRoute from '@/components/common/ProtectedRoute';
-import PublicRoute    from '@/components/PublicRoute';
-
-// DESPUÉS
-import ProtectedRoute from '@/router/ProtectedRoute';
-import PublicRoute    from '@/router/PublicRoute';
-```
-
-**Archivos que necesitan el cambio:**
-
-- `src/router/AppRouter.jsx` → verificar imports
-
----
-
-## 3. Servicios duplicados — unificar en api/
-
-```
-// ANTES (services/ — eliminar estos)
-import { loginAdmin }  from '@/services/authService';
-import { obtenerPerfil } from '@/services/profileService';
-
-// DESPUÉS (api/ — usar estos)
-import { loginAdmin }  from '@/api/auth';
-import { getPerfil }   from '@/api/perfil';
-```
-
----
-
-## 4. Verificar con grep
-
-Una vez hechos los cambios, verificar que no queden imports rotos:
+## Ejecutar el frontend de forma independiente
 
 ```bash
-# Verificar imports de ThemeContext
-grep -r "from.*ThemeContext" src/
-
-# Verificar imports de services/
-grep -r "from.*services/" src/
-
-# Verificar imports de ProtectedRoute mal ubicado
-grep -r "from.*utils/ProtectedRoute" src/
-grep -r "from.*components/PublicRoute" src/
-grep -r "from.*components/common/ProtectedRoute" src/
+cd frontend
+npm install
+cp .env.example .env   # completar con tus valores reales
+npm run dev              # desarrollo (http://localhost:5173)
+npm run build             # build de producción (queda en dist/)
 ```
 
----
+## Variables de entorno
 
-## 5. Tailwind — agregar Google Fonts
+| Variable | Descripción |
+|---|---|
+| `VITE_API_URL` | URL base del backend (ej. `http://localhost:4000` en desarrollo) |
+| `VITE_GOOGLE_CLIENT_ID` | Client ID de Google OAuth (solo si se usa login con Google) |
 
-Para usar las fuentes `Inter` y `Poppins` del nuevo `index.css`,
-añadir en el `<head>` de `index.html`:
+## Estructura de carpetas
 
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap"
-  rel="stylesheet"
-/>
-```
+> Nota: `components/` no está subdividido por rol — los componentes de UI reutilizables viven en `components/common/`, y el resto de componentes de una sola sección (home, candidatos, etc.) están directamente en `components/`. Los componentes específicos de una página (como `pages/ciudadano/CandidatoCard.jsx`) viven junto a su página, no en `components/`.
 
-O si prefieres no depender de Google Fonts en producción,
-elimina el `@import` al inicio del nuevo `index.css` y las fuentes
-volverán a usar el stack del sistema (igual de limpio).
+## Rutas principales
 
-/******************************************************************************\******************************************************************************* \*/
+| Ruta | Acceso |
+|---|---|
+| `/` | Pública — landing page |
+| `/iniciosesion`, `/registrarse` | Públicas — selección de tipo de cuenta |
+| `/loginadmin`, `/loginciudadano`, `/logincandidato` | Públicas — login por rol |
+| `/admin/*` | Protegida — rol `admin` |
+| `/ciudadano/*` | Protegida — rol `ciudadano` |
+| `/candidato/*` | Protegida — rol `candidato` |
 
-# 🔄 GUÍA DE ACTUALIZACIÓN DE IMPORTS
+## Scripts disponibles
 
-Después de aplicar todos los cambios, actualiza estos imports en tu proyecto.
-
----
-
-## 1. ThemeContext — nueva ubicación
-
-**Buscar y reemplazar en todo el proyecto:**
-
-```
-// ANTES (incorrecto — apuntaba a components/)
-import { useTheme } from './ThemeContext';
-import { useTheme } from '../ThemeContext';
-import { useTheme } from '@/components/ThemeContext';
-import { ThemeProvider } from '@/components/ThemeContext';
-
-// DESPUÉS (correcto)
-import { useTheme }      from '@/context/ThemeContext';
-import { ThemeProvider } from '@/context/ThemeContext';
-```
-
-**Archivos que necesitan el cambio:**
-
-- `src/main.jsx` ✅ (ya actualizado)
-- `src/components/common/ThemeToggle.jsx` ✅ (ya actualizado)
-- `src/components/ThemeToggle.jsx` → actualizar (o eliminar este archivo)
-- Cualquier otro componente que use `useTheme`
-
----
-
-## 2. ProtectedRoute / PublicRoute — nueva ubicación
-
-```
-// ANTES
-import ProtectedRoute from '@/utils/ProtectedRoute';
-import ProtectedRoute from '@/components/common/ProtectedRoute';
-import PublicRoute    from '@/components/PublicRoute';
-
-// DESPUÉS
-import ProtectedRoute from '@/router/ProtectedRoute';
-import PublicRoute    from '@/router/PublicRoute';
-```
-
-**Archivos que necesitan el cambio:**
-
-- `src/router/AppRouter.jsx` → verificar imports
-
----
-
-## 3. Servicios duplicados — unificar en api/
-
-```
-// ANTES (services/ — eliminar estos)
-import { loginAdmin }  from '@/services/authService';
-import { obtenerPerfil } from '@/services/profileService';
-
-// DESPUÉS (api/ — usar estos)
-import { loginAdmin }  from '@/api/auth';
-import { getPerfil }   from '@/api/perfil';
-```
-
----
-
-## 4. Verificar con grep
-
-Una vez hechos los cambios, verificar que no queden imports rotos:
-
-```bash
-# Verificar imports de ThemeContext
-grep -r "from.*ThemeContext" src/
-
-# Verificar imports de services/
-grep -r "from.*services/" src/
-
-# Verificar imports de ProtectedRoute mal ubicado
-grep -r "from.*utils/ProtectedRoute" src/
-grep -r "from.*components/PublicRoute" src/
-grep -r "from.*components/common/ProtectedRoute" src/
-```
-
----
-
-## 5. Tailwind — agregar Google Fonts
-
-Para usar las fuentes `Inter` y `Poppins` del nuevo `index.css`,
-añadir en el `<head>` de `index.html`:
-
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap"
-  rel="stylesheet"
-/>
-```
-
-O si prefieres no depender de Google Fonts en producción,
-elimina el `@import` al inicio del nuevo `index.css` y las fuentes
-volverán a usar el stack del sistema (igual de limpio).
+| Script | Uso |
+|---|---|
+| `npm run dev` | Servidor de desarrollo con recarga en caliente |
+| `npm run build` | Build de producción |
+| `npm run preview` | Sirve localmente el build de producción, para probarlo |

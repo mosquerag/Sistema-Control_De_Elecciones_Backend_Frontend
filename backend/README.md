@@ -1,81 +1,78 @@
-# Base de datos — VoteSecure
+# VoteSecure — Backend
 
-MongoDB (Atlas o local) vía Mongoose. Ver también el [diagrama entidad-relación](DIAGRAMAS.md#2-modelo-de-datos-entidad-relación) para la vista visual.
+API REST del sistema de votaciones electrónicas. Node.js + Express + MongoDB (Mongoose).
 
-## Colecciones
+Para la descripción general del proyecto, instalación conjunta y tecnologías, ver el [README principal](../README.md). Para el detalle de modelos y colecciones, ver [docs/BASE_DE_DATOS.md](../docs/BASE_DE_DATOS.md).
 
-### Usuario
-La colección central — cubre admin, ciudadano y candidato en un solo modelo, diferenciados por `rol`.
+## Ejecutar el backend de forma independiente
 
-| Campo | Tipo | Notas |
-|---|---|---|
-| `nombre` | String | Único, 3-100 caracteres |
-| `cedula` | String | 11 dígitos. Obligatoria excepto para `admin` |
-| `email` | String | Obligatorio para `admin` y cuentas Google. Índice `sparse` (permite múltiples documentos sin email) |
-| `password` | String | Hash bcrypt. No requerido si `esGoogleAuth: true` |
-| `rol` | String enum | `admin` \| `ciudadano` \| `candidato` |
-| `estado` | String enum | `pendiente_aprobacion` \| `pendiente` \| `activo` \| `bloqueado` \| `rechazado` \| `archivado` |
-| `esGoogleAuth` / `googleId` | Boolean / String | Cuentas registradas vía Google OAuth |
-| `aprobadoPor` / `rechazadoPor` | ObjectId → Usuario | Quién aprobó/rechazó la cuenta |
-| `historicoEstados` | Array | Bitácora de cambios de estado con fecha y admin responsable |
-| `partido` / `propuestas` / `idEleccion` | — | Solo aplican cuando `rol: "candidato"` |
-| `totalVotos` | Number | Contador denormalizado de votos recibidos (solo candidatos) |
-| `direccion` / `telefono` / `fechaNacimiento` / `nacionalidad` | — | Datos personales |
+```bash
+cd backend
+npm install
+cp .env.example .env   # completar con tus valores reales
+npm run dev              # desarrollo (nodemon)
+npm start                 # producción
+```
 
-**Índices**: `cedula` (único, sparse), `email` (único, sparse), `googleId` (único, sparse), `{rol, estado}`, `{idEleccion, rol}`.
+## Variables de entorno
 
-⚠️ Esta colección contiene **datos personales sensibles** (cédula, email, dirección, teléfono, hash de contraseña). Nunca debe exportarse fuera del entorno de producción sin anonimizar — ver la sección de backups más abajo.
-
-### Eleccion
-| Campo | Tipo | Notas |
-|---|---|---|
-| `titulo` | String | Único |
-| `idTipoEleccion` | ObjectId → TipoEleccion | |
-| `fechaInicio` / `fechaFin` | Date | `fechaFin` debe ser posterior a `fechaInicio` |
-| `estado` | String enum | `proxima` \| `abierta_postulacion` \| `en_votacion` \| `finalizada` \| `cancelada` |
-| `abiertaPostulacion` | Boolean | Si acepta inscripción de nuevos candidatos |
-| `totalVotantes` | Number | Contador denormalizado |
-
-**Regla de negocio importante**: una vez que una elección tiene votos registrados, `fechaInicio`, `fechaFin` e `idTipoEleccion` quedan bloqueados para edición (ver `eleccionesController.js`).
-
-### TipoEleccion
-Catálogo simple: `nombre` (único), `descripcion`, `activa`.
-
-### Voto
-Registra **quién votó**, sin registrar por quién.
-
-| Campo | Notas |
+| Variable | Descripción |
 |---|---|
-| `idCiudadano` | ObjectId → Usuario |
-| `idEleccion` | ObjectId → Eleccion |
-| `fechaVoto`, `ipAddress` | Trazabilidad |
+| `MONGO` | Cadena de conexión a MongoDB (Atlas o local) |
+| `PORT` | Puerto del servidor |
+| `NODE_ENV` | `development` o `production` |
+| `JWT_SECRET` | Secreto para firmar access tokens |
+| `JWT_REFRESH_SECRET` | Secreto para firmar refresh tokens (debe ser distinto al anterior) |
+| `SESSION_SECRET` | Secreto de sesión (usado por Passport/OAuth) |
+| `FRONTEND_URL` | URL del frontend, para CORS y redirecciones OAuth |
+| `ALLOWED_ORIGINS` | Orígenes permitidos por CORS |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_CALLBACK_URL` | Credenciales de Google OAuth |
+| `EMAIL_USER` / `EMAIL_APP_PASSWORD` | Cuenta usada por Nodemailer para envío de correos |
+| `DEBUG_MODE` / `MONGOOSE_DEBUG` | Flags opcionales de depuración |
 
-**Índice único** `{idCiudadano, idEleccion}` — es lo que impide el doble voto.
+## Endpoints principales
 
-### VotoAnonimo
-Registra **por quién se votó**, sin registrar quién votó.
+Todos bajo el prefijo `/api`. Los que requieren autenticación usan cookie `access_token`.
 
-| Campo | Notas |
+| Prefijo | Recurso |
 |---|---|
-| `idEleccion` | ObjectId → Eleccion |
-| `idCandidato` | ObjectId → Usuario |
-| `fecha` | — |
+| `/api/auth` | Registro, login, logout, refresh token, Google OAuth, recuperación de contraseña |
+| `/api/votos` | Emisión y consulta de votos |
+| `/api/approval` | Aprobación/rechazo de ciudadanos y candidatos por admin |
+| `/api/notificaciones` | Notificaciones del panel de administración |
+| `/api/profile` | Perfil del usuario autenticado |
+| `/api/candidatos` | Gestión de candidatos |
+| `/api/ciudadanos` | Gestión de ciudadanos |
+| `/api/elecciones` | Gestión de elecciones |
+| `/api/estadisticas` | Estadísticas y resultados |
+| `/api/paises` | Catálogo de países |
+| `/api/tipos-elecciones` | Catálogo de tipos de elección |
+| `/api/usuarios` | Gestión general de usuarios (admin) |
+| `/api/public` | Endpoints públicos (sin autenticación) |
+| `/api/encuestas` | Encuestas de satisfacción públicas |
 
-Estas dos colecciones separadas son el mecanismo de anonimato del voto — no hay ningún documento que junte ciudadano + candidato en el mismo registro.
+## Scripts disponibles
 
-### Notificacion, Encuesta, Log, Pais
-Colecciones de soporte: notificaciones del panel admin, encuestas de satisfacción, bitácora de acciones del sistema y catálogo de países. Cada una referencia a `Usuario` donde aplica.
+| Script | Uso |
+|---|---|
+| `npm start` | Arranca el servidor (producción) |
+| `npm run dev` | Arranca con nodemon (desarrollo, recarga automática) |
+| `npm test` | Corre la suite de tests (Vitest) |
+| `npm run test:watch` | Tests en modo watch |
+| `npm run seed` | Puebla la base de datos con datos de demo |
+| `npm run backup` | Genera un backup local de las colecciones (⚠️ nunca subir el resultado a Git) |
 
-## Backups
+## Estructura de carpetas
 
-- El script `npm run backup` (en `backend/scripts/backup.js`) genera un dump local de las colecciones.
-- **Regla crítica**: la carpeta de salida de estos backups nunca debe commitearse a Git — está en `.gitignore` (ver el incidente documentado en `CHANGELOG.md` v3.1.0, donde esto no se cumplió y se filtraron datos de 117 usuarios).
-- Guarda los backups fuera del repositorio, idealmente en un almacenamiento cifrado o con acceso restringido.
-
-## Migraciones / cambios de esquema
-
-Este proyecto no usa una herramienta de migraciones formal (como `migrate-mongo`). Al modificar un modelo:
-1. Actualiza el archivo en `backend/models/`.
-2. Si el cambio afecta documentos existentes, escribe un script puntual en `backend/scripts/` para transformarlos.
-3. Documenta el cambio en `CHANGELOG.md`.
-4. Actualiza este archivo (`docs/BASE_DE_DATOS.md`) para reflejar el nuevo esquema.
+```
+backend/
+├── config/         # Configuración (Google OAuth)
+├── controllers/     # Lógica de negocio por recurso
+├── middlewares/      # Auth, rate limiting, sanitización, validación
+├── models/            # Esquemas de Mongoose
+├── routes/            # Definición de endpoints
+├── scripts/           # Scripts utilitarios (seed, backup)
+├── tests/              # Tests con Vitest
+├── utils/              # Conexión a BD, envío de correos
+└── index.js            # Punto de entrada
+```
