@@ -86,231 +86,128 @@ VoteSecure es una aplicación web full-stack que permite la gestión completa de
 
 ```
 proyecto/
-├── backend/
-│   ├── index.js                    # Servidor principal (Express)
-│   ├── package.json
-│   ├── .env                        # Variables de entorno (NO subir a git)
-│   ├── .env.example                # Plantilla de variables de entorno
-│   ├── .gitignore
-│   │
-│   ├── config/
-│   │   └── googleOAuth.js          # Configuración Passport Google OAuth
-│   │
-│   ├── controllers/
-│   │   ├── authController.js       # Registro, login, tokens, OAuth
-│   │   ├── approvalController.js   # Aprobación/rechazo de usuarios
-│   │   ├── candidatosController.js # CRUD de candidatos
-│   │   ├── eleccionesController.js # CRUD de elecciones
-│   │   ├── estadisticasController.js # Resultados y análisis
-│   │   ├── paisController.js       # CRUD de países
-│   │   ├── profileController.js    # Perfil de usuario
-│   │   ├── tipoEleccionController.js # CRUD de tipos de elección
-│   │   ├── usuariosController.js   # Gestión admin de usuarios
-│   │   └── votosController.js      # Sistema de votación
-│   │
-│   ├── middlewares/
-│   │   ├── verifyToken.js          # Autenticación JWT
-│   │   ├── roleMiddleware.js       # Verificación de roles
-│   │   ├── rateLimiter.js          # Rate limiting por endpoint
-│   │   ├── sanitize.js             # Sanitización de inputs (XSS + NoSQL)
-│   │   ├── checkDuplicateVoto.js   # Prevención de voto duplicado
-│   │   ├── normalizarFechas.js     # Normalización de fechas a UTC
-│   │   └── validateAge.js          # Validación de edad mínima (18+)
-│   │
-│   ├── models/
-│   │   ├── Usuario.js              # Modelo de usuarios (admin/ciudadano/candidato)
-│   │   ├── Eleccion.js             # Modelo de elecciones
-│   │   ├── Voto.js                 # Modelo de votos
-│   │   ├── TipoEleccion.js         # Modelo de tipos de elección
-│   │   ├── Notificacion.js         # Modelo de notificaciones
-│   │   ├── Encuesta.js             # Modelo de encuestas
-│   │   ├── Log.js                  # Modelo de logs de auditoría
-│   │   └── Pais.js                 # Modelo de países
-│   │
-│   ├── routes/
-│   │   ├── auth.js                 # Rutas de autenticación
-│   │   ├── approval.js             # Rutas de aprobación
-│   │   ├── candidatos.js           # Rutas de candidatos
-│   │   ├── ciudadanos.js           # Rutas de ciudadanos
-│   │   ├── elecciones.js           # Rutas de elecciones
-│   │   ├── encuestas.js            # Rutas de encuestas
-│   │   ├── estadisticas.js         # Rutas de estadísticas
-│   │   ├── notificaciones.js       # Rutas de notificaciones
-│   │   ├── paises.js               # Rutas de países
-│   │   ├── profile.js              # Rutas de perfil
-│   │   ├── public.js               # Rutas públicas (sin auth)
-│   │   ├── tiposElecciones.js      # Rutas de tipos de elección
-│   │   ├── usuarios.js             # Rutas de usuarios (admin)
-│   │   └── votos.js                # Rutas de votación
-│   │
-│   └── utils/
-│       └── db.js                   # Conexión a MongoDB con Mongoose
+├── README.md # Este archivo
+├── CHANGELOG.md # Historial de versiones
+├── CONTRIBUTING.md # Guía de contribución
 │
-└── frontend/
-    ├── index.html                  # Punto de entrada HTML
-    ├── package.json
-    ├── vite.config.js              # Configuración de Vite
-    ├── tailwind.config.js          # Configuración de Tailwind CSS
-    ├── postcss.config.js
-    ├── jsconfig.json               # Alias de paths (@/ → src/)
-    ├── .env                        # Variables de entorno frontend
-    ├── .env.example
-    │
-    └── src/
-        ├── main.jsx                # Punto de entrada React
-        ├── App.jsx                 # Componente raíz con router
-        ├── index.css               # Estilos globales + variables CSS
-        │
-        ├── api/                    # Servicios de comunicación con backend
-        │   ├── axios.js            # Instancia Axios con interceptores
-        │   ├── auth.js             # Llamadas de autenticación
-        │   ├── candidatos.js
-        │   ├── ciudadanos.js
-        │   ├── elecciones.js
-        │   ├── encuestas.js
-        │   ├── estadisticas.js
-        │   ├── notificaciones.js
-        │   ├── paises.js
-        │   ├── perfil.js
-        │   ├── public.js
-        │   ├── tiposElecciones.js
-        │   ├── usuarios.js
-        │   └── votos.js
-        │
-        ├── context/
-        │   ├── AuthContext.jsx     # Contexto global de autenticación
-        │   └── ThemeContext.jsx    # Contexto global de tema (dark/light)
-        │
-        ├── hooks/
-        │   ├── useAuth.js          # Hook para acceder al AuthContext
-        │   ├── useApi.js           # Hook genérico para llamadas API
-        │   └── useMobile.js        # Hook para detectar dispositivo móvil
-        │
-        ├── router/
-        │   ├── AppRouter.jsx       # Definición de todas las rutas
-        │   ├── ProtectedRoute.jsx  # Protección de rutas privadas
-        │   └── PublicRoute.jsx     # Redirección si ya está autenticado
-        │
-        ├── layouts/
-        │   ├── AdminLayout.jsx     # Layout del panel de administración
-        │   ├── CiudadanoLayout.jsx # Layout del panel de ciudadano
-        │   └── CandidatoLayout.jsx # Layout del panel de candidato
-        │
-        ├── pages/
-        │   ├── home/
-        │   │   └── index.jsx       # Página principal pública
-        │   │
-        │   ├── auth/
-        │   │   ├── InicioSesion.jsx      # Selección de tipo de usuario
-        │   │   ├── RegisterSesion.jsx    # Selección para registro
-        │   │   ├── LoginForm.jsx         # Formulario de login reutilizable
-        │   │   ├── LoginAdmin.jsx
-        │   │   ├── LoginCiudadano.jsx
-        │   │   ├── LoginCandidato.jsx
-        │   │   ├── RegisterForm.jsx      # Formulario de registro reutilizable
-        │   │   ├── RegisterAdmin.jsx
-        │   │   ├── RegisterCiudadano.jsx
-        │   │   ├── RegisterCandidato.jsx
-        │   │   ├── RegisterAdministrador.jsx
-        │   │   └── GoogleCallback.jsx    # Procesamiento callback OAuth
-        │   │
-        │   ├── admin/
-        │   │   ├── DashboardAdmin.jsx
-        │   │   ├── DashboardStats.jsx
-        │   │   ├── GestionElecciones.jsx
-        │   │   ├── EleccionForm.jsx
-        │   │   ├── EleccionList.jsx
-        │   │   ├── EleccionListTotal.jsx
-        │   │   ├── GestionTiposEleccion.jsx
-        │   │   ├── GestionCandidatos.jsx
-        │   │   ├── CandidatoForm.jsx
-        │   │   ├── CandidatoList.jsx
-        │   │   ├── GestionCiudadanos.jsx
-        │   │   ├── CiudadanoForm.jsx
-        │   │   ├── CiudadanoList.jsx
-        │   │   ├── GestionUsuarios.jsx
-        │   │   ├── DetallesUsuarios.jsx
-        │   │   └── EstadisticasAdmin.jsx
-        │   │
-        │   ├── ciudadano/
-        │   │   ├── DashboardCiudadano.jsx
-        │   │   ├── EleccionesActivas.jsx
-        │   │   ├── VerCandidatos.jsx
-        │   │   ├── Votar.jsx
-        │   │   ├── HistorialVotos.jsx
-        │   │   ├── ResultadosPublicos.jsx
-        │   │   └── ListaResultados.jsx
-        │   │
-        │   └── candidato/
-        │       ├── DashboardCandidato.jsx
-        │       └── MisResultados.jsx
-        |    |── perfil/
-        │
-        ├── components/
-        │   ├── common/             # Componentes reutilizables
-        │   │   ├── ActionCard.jsx
-        │   │   ├── Avatar.jsx
-        │   │   ├── BackButton.jsx
-        │   │   ├── Button.jsx
-        │   │   ├── Card.jsx
-        │   │   ├── EmptyState.jsx
-        │   │   ├── FilterBar.jsx
-        │   │   ├── Input.jsx
-        │   │   ├── Label.jsx
-        │   │   ├── Loader.jsx
-        │   │   ├── Modal.jsx
-        │   │   ├── NotificationPanel.jsx
-        │   │   ├── PageHeader.jsx
-        │   │   ├── PageLayout.jsx
-        │   │   ├── ProgressBar.jsx
-        │   │   ├── Select.jsx
-        │   │   ├── Sidebar.jsx
-        │   │   ├── StatusBadge.jsx
-        │   │   ├── Table.jsx
-        │   │   ├── Textarea.jsx
-        │   │   ├── ThemeToggle.jsx
-        │   │   ├── Title.jsx
-        │   │   ├── TopBar.jsx
-        │   │   └── WelcomeBanner.jsx
-        │   │
-        │   ├── auth/
-        │   │   └── GoogleLoginButton.jsx
-        │   │
-        │   ├── home/               # Secciones de la página principal
-        │   │   ├── Actividad.jsx
-        │   │   ├── Caracteristicas.jsx
-        │   │   ├── ControlVotaciones.jsx
-        │   │   ├── Encuesta.jsx
-        │   │   └── Propaganda.jsx
-        │   │
-        │   ├── candidato/
-        │   │   ├── CandidatoCard.jsx
-        │   │   ├── ConoceCandidatos.jsx
-        │   │   └── ResultadosCandidato.jsx
-        │   │
-        │   ├── ciudadano/
-        │   │   ├── MisVotos.jsx
-        │   │   └── VotarModal.jsx
-        │   │
-        │   ├── elecciones/
-        │   │   └── EleccionCard.jsx
-        │   │
-        │   └── perfil/
-        │       └── ConfiguracionPerfil.jsx
-        │
-        ├── config/
-        │   └── googleOAuth.js      # Config Google OAuth frontend
-        │
-        └── utils/
-            ├── alertas.js          # Sistema centralizado de alertas
-            ├── constants.js        # Constantes globales (ROLES, ROUTES)
-            ├── formatDate.js       # Utilidades de formato de fechas
-            ├── loginConfig.js      # Configuración de formularios de login
-            ├── registerConfig.js   # Configuración de formularios de registro
-            ├── userTypes.js        # Tipos de usuario para página home
-            └── validation.js       # Funciones de validación de formularios
-```
-
+├── docs/
+│ ├── DIAGRAMAS.md # Arquitectura, modelo de datos, flujos
+│ ├── MANUAL_USUARIO.md # Manual para ciudadano/candidato/admin
+│ └── BASE_DE_DATOS.md # Documentación de modelos y colecciones
+│
+├── backend/ # Ver backend/README.md para detalle completo
+│ ├── index.js # Servidor principal (Express)
+│ ├── package.json
+│ ├── .env.example
+│ ├── .gitignore
+│ │
+│ ├── config/
+│ │ └── googleOAuth.js
+│ │
+│ ├── controllers/
+│ │ ├── authController.js
+│ │ ├── authAdmin.js
+│ │ ├── authCiudadano.js
+│ │ ├── authCandidato.js
+│ │ ├── forgotPasswordController.js
+│ │ ├── approvalController.js
+│ │ ├── candidatosController.js
+│ │ ├── eleccionesController.js
+│ │ ├── estadisticasController.js
+│ │ ├── paisController.js
+│ │ ├── profileController.js
+│ │ ├── tipoEleccionController.js
+│ │ ├── usuariosController.js
+│ │ └── votosController.js
+│ │
+│ ├── middlewares/
+│ │ ├── verifyToken.js
+│ │ ├── roleMiddleware.js
+│ │ ├── rateLimiter.js
+│ │ ├── sanitize.js
+│ │ ├── checkDuplicateVoto.js
+│ │ ├── normalizarFechas.js
+│ │ └── validateAge.js
+│ │
+│ ├── models/
+│ │ ├── Usuario.js
+│ │ ├── Eleccion.js
+│ │ ├── TipoEleccion.js
+│ │ ├── Voto.js
+│ │ ├── VotoAnonimo.js
+│ │ ├── Notificacion.js
+│ │ ├── Encuesta.js
+│ │ ├── Log.js
+│ │ └── Pais.js
+│ │
+│ ├── routes/ # Un archivo por recurso (ver backend/README.md)
+│ │
+│ ├── scripts/
+│ │ ├── backup.js # Backup local de colecciones
+│ │ ├── seedDemo.js # Datos de demo
+│ │ └── seedMoreElecciones.js
+│ │
+│ ├── tests/ # Suite de tests (Vitest)
+│ │
+│ └── utils/
+│ ├── db.js # Conexión a MongoDB
+│ └── mailer.js # Envío de correos (Nodemailer)
+│
+└── frontend/ # Ver frontend/README.md para detalle completo
+├── index.html
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+├── .env.example
+│
+└── src/
+├── main.jsx
+├── App.jsx
+│
+├── api/ # Un archivo por recurso, llamadas al backend
+│
+├── components/
+│ ├── common/ # Componentes de UI reutilizables (Button, Modal, Sidebar, etc.)
+│ └── *.jsx # Componentes de secciones específicas (Hero, EleccionCard, etc.)
+│
+├── context/
+│ ├── AuthContext.jsx
+│ └── ThemeContext.jsx
+│
+├── hooks/
+│ ├── useAuth.js
+│ ├── useApi.js
+│ └── useMobile.js
+│
+├── router/
+│ ├── AppRouter.jsx
+│ ├── ProtectedRoute.jsx
+│ └── PublicRoute.jsx
+│
+├── layouts/
+│ ├── AdminLayout.jsx
+│ ├── CiudadanoLayout.jsx
+│ └── CandidatoLayout.jsx
+│
+├── pages/
+│ ├── home.jsx
+│ ├── Ayuda.jsx # Manual de uso integrado
+│ ├── auth/
+│ ├── admin/
+│ ├── ciudadano/ # Incluye subcomponentes propios de sus vistas
+│ ├── candidato/
+│ └── perfil/
+│
+├── config/
+│ └── googleOAuth.js
+│
+└── utils/
+├── constants.js # ROLES, ROUTES
+├── alertas.js
+├── formatDate.js
+├── registerConfig.js
+├── userTypes.js
+└── validation.js
 ---
 
 ## ⚙️ Instalación y Configuración
